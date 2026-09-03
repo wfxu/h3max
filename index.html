@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>H3 Max Hub — MiniMax H3 Max resources, APIs, tools &amp; guides | h3max.info</title>
+  <meta name="description" content="h3max.info is the navigation hub for MiniMax H3 Max, the faster-than-real-time AI video model. Official docs, fal.ai APIs, open weights, pricing, tutorials, live demos and community — all in one place.">
+  <meta name="keywords" content="H3 Max, MiniMax H3, H3 Max Turbo, fal.ai, AI video generation, text to video, image to video, open-weight video model, Hailuo 3">
+  <link rel="canonical" href="https://h3max.info/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="H3 Max Hub">
+  <meta property="og:url" content="https://h3max.info/">
+  <meta property="og:title" content="H3 Max Hub — everything about MiniMax H3 Max in one place">
+  <meta property="og:description" content="Official links, APIs, open weights, pricing, guides and live projects for H3 Max, the AI video model that generates faster than real time.">
+  <meta property="og:image" content="https://h3max.info/og.png">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="H3 Max Hub — everything about MiniMax H3 Max in one place">
+  <meta name="twitter:description" content="Official links, APIs, open weights, pricing, guides and live projects for H3 Max.">
+  <meta name="twitter:image" content="https://h3max.info/og.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://h3max.info/#website",
+        "url": "https://h3max.info/",
+        "name": "H3 Max Hub",
+        "description": "The navigation hub for MiniMax H3 Max: official docs, APIs, open weights, pricing, tutorials and community.",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://h3max.info/#webpage",
+        "url": "https://h3max.info/",
+        "name": "H3 Max Hub — MiniMax H3 Max resources, APIs, tools & guides",
+        "isPartOf": { "@id": "https://h3max.info/#website" },
+        "datePublished": "2026-09-03",
+        "dateModified": "2026-09-03",
+        "about": {
+          "@type": "SoftwareApplication",
+          "name": "MiniMax H3 Max",
+          "applicationCategory": "MultimediaApplication",
+          "operatingSystem": "Cloud",
+          "description": "A fal.ai post-trained, speed-optimized build of the open-weight MiniMax H3 video generation model."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --bg-2: #0f1526;
+      --card: #141b2d;
+      --card-hover: #1a2340;
+      --border: #22304d;
+      --text: #e6e9f0;
+      --muted: #94a3b8;
+      --accent: #7c5cff;
+      --accent-2: #22d3ee;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: none; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(11,15,25,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -.01em; }
+    .logo svg { width: 30px; height: 30px; }
+    .nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 720px) { .nav-links { display: none; } }
+
+    /* Hero */
+    .hero {
+      padding: 76px 0 56px;
+      background:
+        radial-gradient(800px 400px at 15% 0%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(700px 400px at 85% 10%, rgba(34,211,238,.16), transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--accent-2);
+      border: 1px solid rgba(34,211,238,.35); border-radius: 999px; padding: 6px 12px;
+      background: rgba(34,211,238,.07);
+    }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px rgba(52,211,153,.2); }
+    h1 {
+      font-size: clamp(34px, 6vw, 60px);
+      line-height: 1.08; letter-spacing: -.03em;
+      margin: 22px 0 18px; font-weight: 800;
+    }
+    h1 .grad {
+      background: linear-gradient(92deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { font-size: 18px; color: var(--muted); max-width: 740px; margin: 0 0 28px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 15px;
+      border: 1px solid var(--border); background: var(--card); transition: .15s;
+    }
+    .btn:hover { background: var(--card-hover); border-color: #34456e; }
+    .btn.primary { background: linear-gradient(92deg, var(--accent), #5b8cff); border-color: transparent; color: #fff; }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 40px; }
+    .fact { background: rgba(20,27,45,.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .fact b { display: block; font-size: 22px; letter-spacing: -.02em; }
+    .fact span { font-size: 13px; color: var(--muted); }
+
+    /* Sections */
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: 0; }
+    h2 { font-size: clamp(24px, 3.4vw, 32px); letter-spacing: -.02em; margin: 0 0 8px; }
+    .sub { color: var(--muted); margin: 0 0 30px; max-width: 760px; }
+    h3 { font-size: 18px; margin: 0 0 6px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; display: flex; flex-direction: column; gap: 8px;
+      transition: .15s; position: relative;
+    }
+    a.card:hover { background: var(--card-hover); border-color: #34456e; transform: translateY(-2px); }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .card .host { font-size: 12px; color: #64748b; margin-top: auto; padding-top: 6px; }
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 6px; background: rgba(124,92,255,.15); color: #b8a7ff; margin-bottom: 4px;
+      width: fit-content;
+    }
+    .tag.cyan { background: rgba(34,211,238,.12); color: #7fe7f7; }
+    .tag.green { background: rgba(52,211,153,.12); color: #7ee7c0; }
+    .tag.amber { background: rgba(251,191,36,.12); color: #fcd47a; }
+
+    .category { margin-bottom: 44px; }
+    .category:last-child { margin-bottom: 0; }
+    .cat-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+    .cat-head h3 { font-size: 20px; }
+    .cat-head span { color: var(--muted); font-size: 14px; }
+
+    /* Model cards */
+    .models { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .model { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+    .model.hl { border-color: rgba(124,92,255,.6); box-shadow: 0 0 0 1px rgba(124,92,255,.25), 0 20px 60px -30px rgba(124,92,255,.5); }
+    .model ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .model li { margin: 4px 0; }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px; }
+    th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: var(--bg-2); color: var(--muted); font-weight: 600; font-size: 13px; letter-spacing: .02em; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-weight: 600; }
+    .note { font-size: 13px; color: #64748b; margin-top: 12px; }
+
+    /* Roadmap */
+    .roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .road { border: 1px dashed var(--border); border-radius: 12px; padding: 16px 18px; color: var(--muted); font-size: 14px; }
+    .road b { color: var(--text); display: block; margin-bottom: 4px; }
+
+    /* Submit */
+    .submit {
+      background: linear-gradient(135deg, rgba(124,92,255,.14), rgba(34,211,238,.10));
+      border: 1px solid var(--border); border-radius: 18px; padding: 34px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .submit p { margin: 6px 0 0; color: var(--muted); max-width: 560px; }
+
+    footer { padding: 36px 0 48px; color: #64748b; font-size: 13px; }
+    footer .row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/" aria-label="H3 Max Hub home">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="url(#g)"/>
+        <path d="M17 18v28M31 18v28M17 32h14" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+        <path d="M39 22h9a5 5 0 010 10h-5 5a5 5 0 010 10h-9" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="64" y2="64"><stop stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
+      </svg>
+      H3 Max Hub
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#what">What is H3 Max</a>
+      <a href="#directory">Directory</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#submit">Submit</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="border-bottom:1px solid var(--border)">
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot"></span> Independent directory · Updated Sep 3, 2026</span>
+      <h1>Everything about <span class="grad">H3 Max</span>,<br>in one place.</h1>
+      <p class="lead">
+        H3 Max is the speed-optimized build of <strong>MiniMax H3</strong>, the open-weight multimodal video model.
+        It turns a prompt or an image into a 5-second 768p clip in roughly three seconds — faster than the video plays.
+        <strong>h3max.info</strong> collects the official links, APIs, open weights, guides and live projects so you can start building in minutes.
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="#directory">Browse the directory</a>
+        <a class="btn" href="#what">What is H3 Max?</a>
+      </div>
+      <div class="facts" aria-label="Quick facts">
+        <div class="fact"><b>~3 s</b><span>to generate a 5-second 768p clip</span></div>
+        <div class="fact"><b>5–15 s</b><span>clip length per request</span></div>
+        <div class="fact"><b>480p / 768p</b><span>output on H3 Max; 2K on MiniMax H3</span></div>
+        <div class="fact"><b>Open weights</b><span>MiniMax H3 base on Hugging Face</span></div>
+        <div class="fact"><b>Native audio</b><span>video + sound in one pass</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap">
+      <h2>What is H3 Max?</h2>
+      <p class="sub">Three names show up everywhere and they are not the same thing. Here is the short version.</p>
+
+      <div class="models">
+        <article class="model">
+          <span class="tag green">Official · open weights</span>
+          <h3>MiniMax H3</h3>
+          <p style="color:var(--muted);font-size:14px;margin:0">
+            MiniMax's next-generation general video model. Takes text, images, video and audio in one request and returns 5–15 seconds of video at 24 fps with native stereo audio. Announced July 31, 2026 (API), weights published August 3 under the MiniMax H3 Community License.
+          </p>
+          <ul>
+            <li>Generation, referencing and editing in a single model</li>
+            <li>Hosted API up to 2K; open checkpoints (FL2VA / Ref2VA) generate 768p natively</li>
+            <li>Self-hostable on a single high-end GPU</li>
+          </ul>
+        </article>
+
+        <article class="model hl">
+          <span class="tag">fal.ai · speed build</span>
+          <h3>H3 Max</h3>
+          <p style="color:var(--muted);font-size:14px;margin:0">
+            Jointly released by MiniMax and fal.ai on August 29, 2026. fal post-trained MiniMax H3 for prompt adherence and visual quality and co-designed the inference stack for speed: a 5-second 768p clip in about three seconds, dozens of times the throughput of the official endpoint.
+          </p>
+          <ul>
+            <li>Text-to-video, image-to-video and reference-to-video endpoints</li>
+            <li>480p and 768p output, API only (no open weights)</li>
+            <li>Fast enough for real-time and interactive video streams</li>
+          </ul>
+        </article>
+
+        <article class="model">
+          <span class="tag cyan">fal.ai · fastest tier</span>
+          <h3>H3 Max Turbo</h3>
+          <p style="color:var(--muted);font-size:14px;margin:0">
+            A further-accelerated variant of H3 Max served at <code>minimax/h3-max-turbo</code>. Same 480p/768p outputs and the lowest per-second price in the family. fal has not published architectural details on how it differs from H3 Max.
+          </p>
+          <ul>
+            <li>Text-to-video and image-to-video</li>
+            <li>Best fit for high-volume batch generation and live use</li>
+            <li>Pricing and limits change often — check fal.ai before you budget</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>MiniMax H3</th><th>H3 Max</th><th>H3 Max Turbo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Maintainer</td><td>MiniMax</td><td>fal.ai (post-trained on H3)</td><td>fal.ai</td></tr>
+            <tr><td>Max resolution</td><td>2K (API) · 768p (open weights)</td><td>768p</td><td>768p</td></tr>
+            <tr><td>Speed</td><td>Baseline</td><td>≈3 s for a 5-second clip</td><td>Faster than H3 Max</td></tr>
+            <tr><td>Endpoints</td><td>T2V, I2V, reference, editing</td><td>T2V, I2V, reference-to-video</td><td>T2V, I2V</td></tr>
+            <tr><td>Open weights</td><td>Yes (H3-Base)</td><td>No</td><td>No</td></tr>
+            <tr><td>Best for</td><td>Max quality, editing, self-hosting</td><td>Fast production &amp; interactive apps</td><td>Volume and cost</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Figures are compiled from MiniMax and fal.ai announcements as of September 2026 and may change. Corrections welcome — see <a href="#submit" style="color:var(--accent-2)">Submit</a>.</p>
+    </div>
+  </section>
+
+  <section id="directory">
+    <div class="wrap">
+      <h2>Directory</h2>
+      <p class="sub">Hand-picked links, grouped by what you are trying to do. Every entry is checked by a human before it goes in.</p>
+
+      <div class="category">
+        <div class="cat-head"><h3>Official</h3><span>from MiniMax</span></div>
+        <div class="grid">
+          <a class="card" href="https://www.minimax.io/blog/minimax-h3" target="_blank" rel="noopener">
+            <span class="tag green">Announcement</span>
+            <h3>MiniMax H3 — an open model breaking the boundaries between tasks</h3>
+            <p>The launch post: architecture, capabilities, benchmarks and the case for one model across generation, referencing and editing.</p>
+            <span class="host">minimax.io</span>
+          </a>
+          <a class="card" href="https://www.minimax.io/news/minimax-h3-open-source" target="_blank" rel="noopener">
+            <span class="tag green">Open source</span>
+            <h3>MiniMax H3 is now open source</h3>
+            <p>The open-weight release announcement, license summary and links to the checkpoints.</p>
+            <span class="host">minimax.io</span>
+          </a>
+          <a class="card" href="https://platform.minimax.io/docs/guides/video-generation" target="_blank" rel="noopener">
+            <span class="tag green">API docs</span>
+            <h3>MiniMax API — video generation guide</h3>
+            <p>Official developer docs covering the H3 and H3 Max endpoints, parameters, input limits and examples.</p>
+            <span class="host">platform.minimax.io</span>
+          </a>
+          <a class="card" href="https://design.minimax.io/h3" target="_blank" rel="noopener">
+            <span class="tag green">Hub</span>
+            <h3>MiniMax H3 Open: tutorials, deployment &amp; workflows</h3>
+            <p>MiniMax's own landing page for the open model with tutorials, deployment notes and workflow examples.</p>
+            <span class="host">design.minimax.io</span>
+          </a>
+          <a class="card" href="https://x.com/MiniMax_AI" target="_blank" rel="noopener">
+            <span class="tag green">Updates</span>
+            <h3>MiniMax on X</h3>
+            <p>Release notes, demos and pricing changes usually land here first.</p>
+            <span class="host">x.com</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="category">
+        <div class="cat-head"><h3>APIs &amp; playgrounds</h3><span>run H3 Max without a GPU</span></div>
+        <div class="grid">
+          <a class="card" href="https://fal.ai/models/minimax/h3-max/text-to-video" target="_blank" rel="noopener">
+            <span class="tag">fal.ai</span>
+            <h3>H3 Max · Text to Video</h3>
+            <p>The flagship endpoint. Prompt in, 5–15 second 480p/768p clip with audio out, in seconds. Playground plus REST, Python and JS clients.</p>
+            <span class="host">fal.ai</span>
+          </a>
+          <a class="card" href="https://fal.ai/models/minimax/h3-max/image-to-video" target="_blank" rel="noopener">
+            <span class="tag">fal.ai</span>
+            <h3>H3 Max · Image to Video</h3>
+            <p>Animate a still image with a text prompt. Good for product shots, characters and storyboards.</p>
+            <span class="host">fal.ai</span>
+          </a>
+          <a class="card" href="https://fal.ai/models/minimax/h3-max/reference-to-video" target="_blank" rel="noopener">
+            <span class="tag">fal.ai</span>
+            <h3>H3 Max · Reference to Video</h3>
+            <p>Keep a subject consistent across shots by passing reference images alongside the prompt.</p>
+            <span class="host">fal.ai</span>
+          </a>
+          <a class="card" href="https://fal.ai/models/minimax/h3-max-turbo/text-to-video" target="_blank" rel="noopener">
+            <span class="tag cyan">fal.ai · Turbo</span>
+            <h3>H3 Max Turbo · Text to Video</h3>
+            <p>The fastest and cheapest tier in the family. Ideal for batch jobs and live, chat-driven video streams.</p>
+            <span class="host">fal.ai</span>
+          </a>
+          <a class="card" href="https://fal.ai/models/minimax/h3-max-turbo/image-to-video" target="_blank" rel="noopener">
+            <span class="tag cyan">fal.ai · Turbo</span>
+            <h3>H3 Max Turbo · Image to Video</h3>
+            <p>Turbo speed for image-conditioned generation.</p>
+            <span class="host">fal.ai</span>
+          </a>
+          <a class="card" href="https://fal.ai/learn/tools/minimax-h3-explained" target="_blank" rel="noopener">
+            <span class="tag">Explainer</span>
+            <h3>MiniMax H3 explained, by fal</h3>
+            <p>fal's write-up on what the model does, how H3 Max differs and how to call it.</p>
+            <span class="host">fal.ai</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="category">
+        <div class="cat-head"><h3>Open weights &amp; self-hosting</h3><span>run MiniMax H3 yourself</span></div>
+        <div class="grid">
+          <a class="card" href="https://huggingface.co/MiniMaxAI" target="_blank" rel="noopener">
+            <span class="tag amber">Weights</span>
+            <h3>MiniMax on Hugging Face</h3>
+            <p>The official organization page hosting the H3-Base checkpoints (FL2VA and Ref2VA) and model cards.</p>
+            <span class="host">huggingface.co</span>
+          </a>
+          <a class="card" href="https://github.com/MiniMax-AI" target="_blank" rel="noopener">
+            <span class="tag amber">Code</span>
+            <h3>MiniMax-AI on GitHub</h3>
+            <p>Inference code, reference implementations and issue trackers for MiniMax's open models.</p>
+            <span class="host">github.com</span>
+          </a>
+          <a class="card" href="https://www.runpod.io/blog/minimax-h3-the-open-weight-omni-modal-video-model-and-what-it-takes-to-run-it" target="_blank" rel="noopener">
+            <span class="tag amber">Guide</span>
+            <h3>RunPod: what it takes to run MiniMax H3</h3>
+            <p>GPU requirements, VRAM math and a step-by-step cloud deployment of the open checkpoints.</p>
+            <span class="host">runpod.io</span>
+          </a>
+          <a class="card" href="https://www.spheron.network/blog/deploy-minimax-h3-gpu-cloud/" target="_blank" rel="noopener">
+            <span class="tag amber">Guide</span>
+            <h3>Deploy MiniMax H3 on GPU cloud</h3>
+            <p>Another deployment walkthrough with cost estimates for different GPU classes.</p>
+            <span class="host">spheron.network</span>
+          </a>
+          <a class="card" href="https://huggingface.co/blog/ResterChed/minimax-h3-hailuo-3-0" target="_blank" rel="noopener">
+            <span class="tag amber">Community post</span>
+            <h3>What is MiniMax H3 (Hailuo 3.0)?</h3>
+            <p>A community explainer on the Hugging Face blog covering the release, the license and how it compares to Hailuo 2.</p>
+            <span class="host">huggingface.co</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="category">
+        <div class="cat-head"><h3>Specs &amp; guides</h3><span>limits, licensing, prompting</span></div>
+        <div class="grid">
+          <a class="card" href="https://morphic.com/resources/models/minimax-h3" target="_blank" rel="noopener">
+            <span class="tag">Reference</span>
+            <h3>MiniMax H3: full specs and input limits</h3>
+            <p>Resolutions, durations, frame rates, supported inputs and prompt length limits in one table.</p>
+            <span class="host">morphic.com</span>
+          </a>
+          <a class="card" href="https://kylon.io/blog/minimax-h3-guide-2026" target="_blank" rel="noopener">
+            <span class="tag">Guide</span>
+            <h3>MiniMax H3 guide: open-weight video, API and license</h3>
+            <p>A practical overview for developers: which endpoint to pick, license terms and integration tips.</p>
+            <span class="host">kylon.io</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="category">
+        <div class="cat-head"><h3>Live &amp; interactive projects</h3><span>what people are building</span></div>
+        <div class="grid">
+          <a class="card" href="https://fal.live" target="_blank" rel="noopener">
+            <span class="tag cyan">Live</span>
+            <h3>fal.live</h3>
+            <p>fal's own always-on interactive stream: viewers type prompts and H3 Max renders the next scene in real time.</p>
+            <span class="host">fal.live</span>
+          </a>
+          <a class="card" href="https://levels.io/infinite-slop" target="_blank" rel="noopener">
+            <span class="tag cyan">Live</span>
+            <h3>Infinite Slop</h3>
+            <p>Pieter Levels' chat-driven infinite AI video channel, built on H3 Max in an afternoon and viewed millions of times on X.</p>
+            <span class="host">levels.io</span>
+          </a>
+          <a class="card" href="https://elevenlabs.io" target="_blank" rel="noopener">
+            <span class="tag cyan">Integration</span>
+            <h3>ElevenLabs · ElevenCreative</h3>
+            <p>One of the first commercial integrations: H3 Max video generation inside ElevenLabs' creative video tooling.</p>
+            <span class="host">elevenlabs.io</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <h2>Pricing snapshot</h2>
+      <p class="sub">fal.ai bills per second of generated video on a prepaid credit balance. A launch promotion runs until <strong>September 7, 2026</strong>; standard rates apply after that.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Endpoint</th><th>Resolution</th><th>Promo (until Sep 7, 2026)</th><th>Standard</th><th>15-second clip at standard rate</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>H3 Max Turbo</td><td>480p</td><td>$0.00625 / s</td><td>$0.025 / s</td><td>$0.38</td></tr>
+            <tr><td>H3 Max Turbo</td><td>768p</td><td>$0.01 / s</td><td>$0.04 / s</td><td>$0.60</td></tr>
+            <tr><td>H3 Max</td><td>480p</td><td>$0.0125 / s</td><td>$0.05 / s</td><td>$0.75</td></tr>
+            <tr><td>H3 Max</td><td>768p</td><td>$0.02 / s</td><td>$0.08 / s</td><td>$1.20</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Prices as listed on fal.ai in early September 2026. Always confirm on the model page before committing a budget. fal enables auto top-up by default — turn it off in Billing if you want a hard cap.</p>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="wrap">
+      <h2>What's coming to h3max.info</h2>
+      <p class="sub">This is version one: a curated directory. Here is what we are building next.</p>
+      <div class="roadmap">
+        <div class="road"><b>Cost calculator</b>Estimate a project's spend across H3, H3 Max and Turbo at any resolution and length.</div>
+        <div class="road"><b>Prompt library</b>Tested prompts with the clips they produced, tagged by style and use case.</div>
+        <div class="road"><b>Model comparison</b>H3 Max vs Kling, Seedance, Veo and Sora on speed, price, quality and audio.</div>
+        <div class="road"><b>Tutorials</b>From first API call to a live, chat-driven video stream.</div>
+        <div class="road"><b>Showcase</b>Products, channels and experiments built on H3 Max, with traffic and cost notes where available.</div>
+        <div class="road"><b>Newsletter</b>A short weekly digest of model updates, price changes and new tools.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="submit">
+    <div class="wrap">
+      <div class="submit">
+        <div>
+          <h2 style="margin:0">Know something we missed?</h2>
+          <p>Tools, tutorials, integrations, live channels, papers — if it is about H3 Max or MiniMax H3, we want it listed. Submissions are reviewed by hand.</p>
+        </div>
+        <a class="btn primary" href="https://github.com/wfxu/h3max/issues/new?title=Link%20submission%3A%20&amp;body=URL%3A%20%0AWhat%20it%20is%3A%20%0AWhy%20it%20belongs%20here%3A%20" target="_blank" rel="noopener">Submit a link on GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <div>© 2026 h3max.info · An independent community directory. Not affiliated with MiniMax or fal.ai. All trademarks belong to their owners.</div>
+      <div>
+        <a href="https://github.com/wfxu/h3max" target="_blank" rel="noopener">Source on GitHub</a> ·
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
