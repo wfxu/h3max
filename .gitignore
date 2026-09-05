@@ -6,3 +6,14 @@ node_modules
 .my/
 bash.exe.stackdump
 *.stackdump
+
+# next.js / node
+/node_modules
+/.next/
+/out/
+/build
+npm-debug.log*
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
