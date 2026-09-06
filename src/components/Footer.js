@@ -14,6 +14,7 @@ export default function Footer() {
           <Link href="/legal/terms" className="hover:text-primary-text transition-colors">Terms</Link>
           <Link href="/legal/privacy" className="hover:text-primary-text transition-colors">Privacy</Link>
           <Link href="/legal/refunds" className="hover:text-primary-text transition-colors">Refunds</Link>
+          <Link href="/contact" className="hover:text-primary-text transition-colors">Contact</Link>
           <a href="https://github.com/wfxu/h3max" target="_blank" rel="noopener noreferrer" className="hover:text-primary-text transition-colors">GitHub</a>
         </div>
       </div>

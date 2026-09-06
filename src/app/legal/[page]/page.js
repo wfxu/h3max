@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import config from "@/lib/config";
 
 const UPDATED = "September 6, 2026";
-const CONTACT = "https://github.com/wfxu/h3max/issues/new";
+const CONTACT = "the contact form at https://h3max.info/contact";
 
 // Plain-language policies for a small credit-based generation service. Review before launch.
 const PAGES = {
@@ -19,7 +19,7 @@ const PAGES = {
       ["Your content", "You keep the rights to what you upload and to the videos you generate, subject to the rights of the model provider (MiniMax / fal.ai). You must have the right to use any image you upload. Do not upload or generate content that is illegal, sexual involving minors, non-consensual, hateful, or that impersonates real people in a misleading way."],
       ["Availability", "The Service depends on third-party providers and is offered as-is. We may change tools, prices and features at any time. We are not liable for indirect losses; our total liability is limited to the amount you paid in the last 12 months."],
       ["Independence", "h3max.info is an independent community project and is not affiliated with MiniMax or fal.ai."],
-      ["Contact", `Questions: open an issue at ${CONTACT}.`],
+      ["Contact", `Questions: use ${CONTACT}.`],
     ],
   },
   privacy: {
@@ -41,7 +41,7 @@ const PAGES = {
       ["Partly used packs", "Credits already spent on completed generations cannot be refunded. Remaining unused credits from a pack can be refunded on request within 14 days, minus the value of credits used."],
       ["Failed or broken results", "Credits for generations that fail are returned automatically. If a completed video is clearly broken (no video, corrupted file), tell us within 7 days and we will re-credit it."],
       ["Quality of AI output", "Generative video is probabilistic. A result that is technically fine but not what you hoped for is not a defect and is not refundable — use the cheaper Quick Draft tool to iterate before spending on longer clips."],
-      ["How to ask", `Open an issue at ${CONTACT} with your account e-mail and the PayPal transaction id. Refunds are processed through PayPal within 5–10 business days.`],
+      ["How to ask", `Use ${CONTACT} with your account e-mail and the PayPal transaction id. Refunds are processed through PayPal within 5–10 business days.`],
     ],
   },
 };

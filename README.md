@@ -22,6 +22,7 @@ Next.js 16 (App Router) · React 19 · Tailwind v4 · Prisma 7 + PostgreSQL · N
 | `/pricing` | credit packs — PayPal Checkout (Creem/Stripe adapters exist but are off) |
 | `/admin` | operator console: create/edit/publish tools (`ADMIN_EMAILS` only) |
 | `/legal/terms`, `/legal/privacy`, `/legal/refunds` | policies (edit the text in `src/app/legal/[page]/page.js`) |
+| `/contact` | contact form → your inbox via Resend (`RESEND_API_KEY`, `CONTACT_TO`); shows a GitHub fallback until configured |
 | `/api/generation` | charges credits, whitelists inputs, submits to fal.ai |
 | `/api/webhook/fal` | fal.ai completion webhook (ED25519 signature verified) |
 | `/api/paypal/return`, `/api/webhook/paypal`, `/api/webhook/creem`, `/api/webhook/stripe` | credit top-ups (signature-verified, idempotent per order) |
