@@ -6,7 +6,6 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { FiLogOut, FiPlus, FiUser, FiZap, FiSettings } from "react-icons/fi";
-import config from "@/lib/config";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -38,7 +37,9 @@ export default function Navbar() {
               </linearGradient>
             </defs>
           </svg>
-          <span className="text-lg font-black tracking-tight text-primary-text text-nowrap">{config.appName}</span>
+          <span className="text-lg font-black tracking-tight text-primary-text text-nowrap">
+            H3 Max <span className="text-secondary-text font-semibold">Studio</span>
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
