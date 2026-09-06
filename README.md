@@ -9,7 +9,7 @@ Live: https://h3max.info · Independent community project, not affiliated with M
 
 ## Stack
 
-Next.js 16 (App Router) · React 19 · Tailwind v4 · Prisma 7 + PostgreSQL · NextAuth (Google) · Creem (merchant of record; Stripe optional) · `@fal-ai/client` (queue API + webhooks)
+Next.js 16 (App Router) · React 19 · Tailwind v4 · Prisma 7 + PostgreSQL · NextAuth (Google) · PayPal Checkout (Creem/Stripe adapters optional) · `@fal-ai/client` (queue API + webhooks)
 
 ## Routes
 
@@ -19,7 +19,7 @@ Next.js 16 (App Router) · React 19 · Tailwind v4 · Prisma 7 + PostgreSQL · N
 | `/studio` | public directory of tools (server-rendered) |
 | `/studio/[slug]` | one tool: form → generate → result |
 | `/studio/[slug]/gallery`, `/gallery` | the signed-in user's clips |
-| `/pricing` | credit packs — one button per configured provider (PayPal, Creem, Stripe) |
+| `/pricing` | credit packs — PayPal Checkout (Creem/Stripe adapters exist but are off) |
 | `/admin` | operator console: create/edit/publish tools (`ADMIN_EMAILS` only) |
 | `/api/generation` | charges credits, whitelists inputs, submits to fal.ai |
 | `/api/webhook/fal` | fal.ai completion webhook (ED25519 signature verified) |
@@ -45,7 +45,7 @@ npm run dev
 1. PostgreSQL (Supabase / Neon): set `DATABASE_URL` and `DIRECT_URL`, run `npx prisma db push` once.
 2. Google OAuth client with redirect URI `https://h3max.info/api/auth/callback/google`.
 3. `FAL_KEY` from fal.ai; `WEBHOOK_URL=https://h3max.info` so fal can post completions.
-4. Payments (`PAYMENT_PROVIDERS=paypal,creem`): **PayPal** — a REST app on developer.paypal.com → `PAYPAL_CLIENT_ID/SECRET`, `PAYPAL_ENV=live` (live credentials need a PayPal Business account), a webhook for `PAYMENT.CAPTURE.COMPLETED` → `https://h3max.info/api/webhook/paypal` (`PAYPAL_WEBHOOK_ID`). **Creem** — a Creem account (accepts individual sellers from mainland China), one product per credit pack → `CREEM_PRODUCT_*`, `CREEM_API_KEY`, and a webhook for `checkout.completed` → `https://h3max.info/api/webhook/creem` (`CREEM_WEBHOOK_SECRET`). Use a `creem_test_…` key first: it targets `test-api.creem.io` and charges nothing. Stripe works the same way with `PAYMENT_PROVIDER=stripe`.
+4. Payments (`PAYMENT_PROVIDERS=paypal`): **PayPal** — a REST app on developer.paypal.com → `PAYPAL_CLIENT_ID/SECRET`, `PAYPAL_ENV=live` (live credentials need a PayPal Business account), a webhook for `PAYMENT.CAPTURE.COMPLETED` → `https://h3max.info/api/webhook/paypal` (`PAYPAL_WEBHOOK_ID`). **Creem** — a Creem account (accepts individual sellers from mainland China), one product per credit pack → `CREEM_PRODUCT_*`, `CREEM_API_KEY`, and a webhook for `checkout.completed` → `https://h3max.info/api/webhook/creem` (`CREEM_WEBHOOK_SECRET`). Use a `creem_test_…` key first: it targets `test-api.creem.io` and charges nothing. Stripe works the same way with `PAYMENT_PROVIDER=stripe`.
 5. `ADMIN_EMAILS` — the operator Google account(s).
 6. `npm run db:seed` once to publish the starter scenarios, then tune them in `/admin`.
 

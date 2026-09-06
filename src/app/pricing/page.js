@@ -132,7 +132,7 @@ function PricingContent() {
         ))}
       </div>
 
-      {status !== "authenticated" && (
+      {status === "unauthenticated" && (
         <p className="text-xs text-secondary-text">
           <Link href="/login?callbackUrl=/pricing" className="text-primary font-bold hover:underline">Sign in</Link> to purchase. New accounts already include free credits.
         </p>
