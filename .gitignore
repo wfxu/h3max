@@ -20,3 +20,6 @@ next-env.d.ts
 
 # local mock clip for FAL_KEY-less development
 /public/mock/
+
+.vercel
+.env*
