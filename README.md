@@ -21,6 +21,7 @@ Next.js 16 (App Router) · React 19 · Tailwind v4 · Prisma 7 + PostgreSQL · N
 | `/studio/[slug]/gallery`, `/gallery` | the signed-in user's clips |
 | `/pricing` | credit packs — PayPal Checkout (Creem/Stripe adapters exist but are off) |
 | `/admin` | operator console: create/edit/publish tools (`ADMIN_EMAILS` only) |
+| `/legal/terms`, `/legal/privacy`, `/legal/refunds` | policies (edit the text in `src/app/legal/[page]/page.js`) |
 | `/api/generation` | charges credits, whitelists inputs, submits to fal.ai |
 | `/api/webhook/fal` | fal.ai completion webhook (ED25519 signature verified) |
 | `/api/paypal/return`, `/api/webhook/paypal`, `/api/webhook/creem`, `/api/webhook/stripe` | credit top-ups (signature-verified, idempotent per order) |
@@ -41,6 +42,8 @@ npm run dev
 - `npm test` runs the unit tests (cost model, input whitelisting, webhook signature verification, slugs).
 
 ## Production checklist
+
+A git-ignored `.env.vercel` in the repo root lists every variable with a fresh `NEXTAUTH_SECRET`; fill it in and copy to Vercel → Settings → Environment Variables.
 
 1. PostgreSQL (Supabase / Neon): set `DATABASE_URL` and `DIRECT_URL`, run `npx prisma db push` once.
 2. Google OAuth client with redirect URI `https://h3max.info/api/auth/callback/google`.

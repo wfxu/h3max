@@ -35,7 +35,8 @@ export async function POST(req) {
       return NextResponse.json({ url: `data:${file.type};base64,${buffer.toString("base64")}` });
     }
 
-    const url = await getFal().storage.upload(file);
+    // Inputs are referenced from the user's gallery later, so keep them too.
+    const url = await getFal().storage.upload(file, { lifecycle: { expiresIn: "never" } });
     return NextResponse.json({ url });
   } catch (error) {
     console.error("Upload error:", error);

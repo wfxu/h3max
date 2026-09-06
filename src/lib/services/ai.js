@@ -60,7 +60,9 @@ export const AIService = {
 
     try {
       const webhookUrl = `${config.auth.webhook_url}/api/webhook/fal`;
-      const queued = await getFal().queue.submit(modelId, { input: { ...input, prompt }, webhookUrl });
+      // Keep generated files on the fal CDN indefinitely (default retention is not guaranteed).
+      const headers = { "X-Fal-Object-Lifecycle-Preference": JSON.stringify({ expiration_duration_seconds: null }) };
+      const queued = await getFal().queue.submit(modelId, { input: { ...input, prompt }, webhookUrl, headers });
       await prisma.creation.update({ where: { id: creation.id }, data: { requestId: queued.request_id } });
       return { id: creation.id, status: "processing", requestId: queued.request_id };
     } catch (err) {
