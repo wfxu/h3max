@@ -51,11 +51,16 @@ export async function POST(req) {
     }
 
     const cost = computeCost(cfg, values);
+    // Gallery label: the user's text box, else the first text-like input they filled (e.g. the line to write).
+    const firstText = (Array.isArray(cfg.userParams) ? cfg.userParams : [])
+      .filter((p) => (p?.type === "text" || p?.type === "textarea") && p.autofill !== "vision")
+      .map((p) => values[p.key])
+      .find((v) => typeof v === "string" && v.trim());
     const result = await AIService.generate(session.user.id, {
       appId: app.id,
       modelId,
       prompt: finalPrompt,
-      userPrompt: String(prompt || "").slice(0, 5000),
+      userPrompt: String(prompt || firstText || "").slice(0, 5000),
       inputImage: input.image_url || input.reference_image_urls?.[0] || null,
       input,
       cost,
