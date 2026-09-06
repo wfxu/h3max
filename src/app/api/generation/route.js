@@ -30,9 +30,15 @@ export async function POST(req) {
     const model = getModel(modelId);
 
     const { values, input } = resolveParams(cfg, body, modelId);
-    const finalPrompt = buildPrompt(cfg, prompt);
+    const finalPrompt = buildPrompt(cfg, prompt, values);
     if (!finalPrompt) {
       return NextResponse.json({ error: "Please describe the video you want." }, { status: 400 });
+    }
+    // Params the template needs (e.g. the text to write) must not be empty.
+    for (const p of Array.isArray(cfg.userParams) ? cfg.userParams : []) {
+      if (p?.required && (values[p.key] === undefined || values[p.key] === "" || (Array.isArray(values[p.key]) && !values[p.key].length))) {
+        return NextResponse.json({ error: `Please fill in "${p.label || p.key}".` }, { status: 400 });
+      }
     }
 
     // Default-form image upload → the right key for the model's mode.

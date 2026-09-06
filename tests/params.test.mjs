@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { resolveParams, buildPrompt, safeParseConfig, isUrlLike } from "../src/lib/params.js";
+import { resolveParams, buildPrompt, safeParseConfig, isUrlLike, templatePlaceholders } from "../src/lib/params.js";
 
 const I2V = "minimax/h3-max/image-to-video";
 const T2V = "minimax/h3-max/text-to-video";
@@ -57,6 +57,14 @@ test("buildPrompt joins the hidden prefix and the user text, or uses a template"
   assert.equal(buildPrompt({ systemPrompt: "Only prefix." }, ""), "Only prefix.");
   assert.equal(buildPrompt({}, ""), "");
   assert.equal(buildPrompt({ promptTemplate: "Shot of {prompt}, 35mm" }, "a dog"), "Shot of a dog, 35mm");
+});
+
+test("template placeholders are filled from resolved param values", () => {
+  const cfg = { promptTemplate: "角色：{character}。写下「{text}」。{text} 必须精确。{unknown}{image_url}" };
+  const values = { character: "戴黑帽的男人", text: "我是小羽!", image_url: "https://x/y.png" };
+  assert.equal(buildPrompt(cfg, "", values), "角色：戴黑帽的男人。写下「我是小羽!」。我是小羽! 必须精确。");
+  assert.deepEqual(templatePlaceholders(cfg.promptTemplate), ["character", "text", "unknown", "image_url"]);
+  assert.equal(buildPrompt({ promptTemplate: "{prompt} / {n} / {flag}" }, "hi", { n: 15, flag: true }), "hi / 15 / true");
 });
 
 test("safeParseConfig and isUrlLike", () => {

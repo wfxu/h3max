@@ -34,8 +34,10 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
   const [sourceImage, setSourceImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [localGenerating, setLocalGenerating] = useState(false);
+  const [analyzing, setAnalyzing] = useState({});
   const generating = propGenerating !== undefined ? propGenerating : localGenerating;
   const setGenerating = propSetGenerating !== undefined ? propSetGenerating : setLocalGenerating;
+  const visionParams = userParams.filter((p) => p.autofill === "vision" && p.type !== "hidden");
 
   const [customValues, setCustomValues] = useState(() => {
     const initial = {};
@@ -56,12 +58,44 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
     return data.url;
   };
 
+  /** Fill every "autofill from image" field by describing the uploaded image server-side. */
+  const runAutofill = async (imageUrl) => {
+    if (!imageUrl || !visionParams.length) return;
+    await Promise.all(
+      visionParams.map(async (p) => {
+        setAnalyzing((s) => ({ ...s, [p.key]: true }));
+        try {
+          const { data } = await axios.post("/api/analyze", { appId: appInstance.id, paramKey: p.key, imageUrl });
+          setCustomValues((prev) => ({ ...prev, [p.key]: data.text }));
+        } catch (err) {
+          toast.error(err.response?.data?.error || `Could not analyse the image for "${p.label}" — you can type it yourself.`);
+        } finally {
+          setAnalyzing((s) => ({ ...s, [p.key]: false }));
+        }
+      })
+    );
+  };
+
+  const firstImage = () => {
+    if (sourceImage) return sourceImage;
+    for (const p of userParams) {
+      if (p.type === "image_list") {
+        const v = customValues[p.key];
+        const list = Array.isArray(v) ? v : v ? [v] : [];
+        if (list[0]) return list[0];
+      }
+    }
+    return null;
+  };
+
   const handleSourceUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     try {
-      setSourceImage(await uploadFile(file));
+      const url = await uploadFile(file);
+      setSourceImage(url);
+      runAutofill(url);
     } catch (err) {
       toast.error(err.response?.data?.error || "Upload failed.");
     } finally {
@@ -81,6 +115,7 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
         const list = Array.isArray(prev[param.key]) ? prev[param.key] : [];
         return { ...prev, [param.key]: [...list, url].slice(0, max) };
       });
+      if (param.type === "image_list" && !sourceImage) runAutofill(url);
     } catch (err) {
       toast.error(err.response?.data?.error || "Upload failed.");
     } finally {
@@ -105,6 +140,19 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
     }
     if (showDefaultUpload && !sourceImage && cfg.requireImage) {
       toast.error("Please upload an image first.");
+      return;
+    }
+    if (Object.values(analyzing).some(Boolean)) {
+      toast.error("Still analysing your image — one moment.");
+      return;
+    }
+    const missing = visibleParams.find((p) => {
+      if (!p.required) return false;
+      const v = customValues[p.key];
+      return v === undefined || v === "" || (Array.isArray(v) && v.length === 0);
+    });
+    if (missing) {
+      toast.error(`Please fill in "${missing.label}".`);
       return;
     }
 
@@ -162,7 +210,28 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
 
   const renderParam = (param) => {
     const value = customValues[param.key];
-    const label = <label className="text-xs font-bold text-secondary-text uppercase tracking-wider block">{param.label}</label>;
+    const isVision = param.autofill === "vision";
+    const busy = !!analyzing[param.key];
+    const label = (
+      <div className="flex items-center justify-between gap-2">
+        <label className="text-xs font-bold text-secondary-text uppercase tracking-wider block">
+          {param.label}
+          {param.required && <span className="text-primary"> *</span>}
+        </label>
+        {isVision &&
+          (busy ? (
+            <span className="text-[10px] text-primary font-bold flex items-center gap-1">
+              <FiRefreshCw className="animate-spin" /> Reading your image…
+            </span>
+          ) : firstImage() ? (
+            <button type="button" onClick={() => runAutofill(firstImage())} className="text-[10px] text-primary font-bold hover:underline cursor-pointer">
+              Re-detect
+            </button>
+          ) : (
+            <span className="text-[10px] text-secondary-text">auto-filled from your image</span>
+          ))}
+      </div>
+    );
 
     if (UPLOAD_TYPES.includes(param.type)) {
       const urls = Array.isArray(value) ? value : value ? [value] : [];
@@ -291,10 +360,12 @@ export default function VideoTemplate({ appInstance, activeCreation, onCreationC
           {label}
           <textarea
             value={value}
+            disabled={busy}
             onChange={(e) => setCustomValues((prev) => ({ ...prev, [param.key]: e.target.value }))}
             placeholder={param.placeholder || `Enter ${param.label.toLowerCase()}…`}
-            className="w-full bg-bg-page border border-divider rounded p-3 text-xs outline-none focus:border-primary/60 transition-colors h-24 resize-none font-medium placeholder-secondary-text leading-relaxed"
+            className="w-full bg-bg-page border border-divider rounded p-3 text-xs outline-none focus:border-primary/60 transition-colors h-24 resize-none font-medium placeholder-secondary-text leading-relaxed disabled:opacity-60"
           />
+          {param.help && <p className="text-[10px] text-secondary-text">{param.help}</p>}
         </div>
       );
     }

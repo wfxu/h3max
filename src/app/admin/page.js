@@ -447,6 +447,17 @@ export default function AdminPage() {
                     <Field label="Hidden prompt prefix (users never see this)" hint="Prepended to whatever the user types. Use it to lock the style, camera and mood of the scenario.">
                       <textarea className={`${inputCls} h-24 resize-none`} value={cfg.systemPrompt} onChange={(e) => setCfg({ systemPrompt: e.target.value })} placeholder="Cinematic product commercial, slow orbit, studio lighting…" />
                     </Field>
+                    <Field
+                      label="Prompt template (advanced, optional)"
+                      hint="When set, this replaces the prefix. Use {prompt} for the user's text and {key} for any input below (e.g. {character}, {text}). Inputs can be auto-filled from the uploaded image."
+                    >
+                      <textarea
+                        className={`${inputCls} h-40 resize-y font-mono text-[11px] leading-relaxed`}
+                        value={cfg.promptTemplate || ""}
+                        onChange={(e) => setCfg({ promptTemplate: e.target.value })}
+                        placeholder={"15秒，竖屏。…角色外貌：{character}…\n用马克笔大大写下：{text}"}
+                      />
+                    </Field>
                     <Toggle label="Show a text box to the user" checked={cfg.showPrompt} onChange={(v) => setCfg({ showPrompt: v })} />
                     {cfg.showPrompt && (
                       <div className="grid grid-cols-2 gap-3">
@@ -587,9 +598,36 @@ export default function AdminPage() {
                               </Field>
                             )}
                             {(param.type === "text" || param.type === "textarea") && (
-                              <Field label="Placeholder">
-                                <input className={inputCls} value={param.placeholder || ""} onChange={(e) => updateParam(index, { placeholder: e.target.value })} />
-                              </Field>
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <Field label="Placeholder">
+                                    <input className={inputCls} value={param.placeholder || ""} onChange={(e) => updateParam(index, { placeholder: e.target.value })} />
+                                  </Field>
+                                  <Field label="Auto-fill">
+                                    <CustomSelect
+                                      value={param.autofill || ""}
+                                      onChange={(v) => updateParam(index, { autofill: v || undefined })}
+                                      options={[
+                                        { label: "Off — user types it", value: "" },
+                                        { label: "From the uploaded image (vision)", value: "vision" },
+                                      ]}
+                                    />
+                                  </Field>
+                                </div>
+                                {param.autofill === "vision" && (
+                                  <Field label="What should the vision model write here?" hint="Runs on fal any-llm/vision (Gemini Flash) right after the user uploads; the user can still edit the result.">
+                                    <textarea
+                                      className={`${inputCls} h-24 resize-y`}
+                                      value={param.autofillInstruction || ""}
+                                      onChange={(e) => updateParam(index, { autofillInstruction: e.target.value })}
+                                      placeholder="只看圆形头像里的人物，用一句中文描述其性别、发型发色、帽子、上衣类型与颜色…"
+                                    />
+                                  </Field>
+                                )}
+                              </div>
+                            )}
+                            {param.type !== "hidden" && (
+                              <Toggle label="Required" checked={param.required === true} onChange={(v) => updateParam(index, { required: v || undefined })} />
                             )}
                           </div>
                         ))

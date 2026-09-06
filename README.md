@@ -49,6 +49,16 @@ npm run dev
 5. `ADMIN_EMAILS` — the operator Google account(s).
 6. `npm run db:seed` once to publish the starter scenarios, then tune them in `/admin`.
 
+## Scenario recipe: prompt templates + image-aware inputs
+
+A tool's prompt can be a **template** with placeholders: `{prompt}` = the user's text box, `{key}` = any extra input.
+An input can be **auto-filled from the uploaded image**: mark it `autofill: vision` and give it an instruction; right after
+the upload, `/api/analyze` runs fal `any-llm/vision` (Gemini 2.5 Flash, a few cents) and fills the field, which the user can still edit.
+
+Example — *Profile Page Takeover* (seeded): the user uploads an X profile screenshot and types a line. The template contains
+`{character}` (auto-described avatar person, keeps the actor consistent) and `{text}` (the line to graffiti). Everything else —
+15 s, 768P, the whole choreography — is baked in. Mark such inputs `required` so generation refuses empty values.
+
 ## Pricing model
 
 1 credit = $0.01. Suggested tool prices are fal.ai list price × 1.5 (`src/lib/models.js`): H3 Max 768P → 12 credits/s, H3 Max Turbo 768P → 6/s, Turbo 480P → 4/s. New accounts start with 60 credits. Failed renders are refunded automatically.

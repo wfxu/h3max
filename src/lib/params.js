@@ -55,15 +55,37 @@ function coerce(param, value) {
   return String(value).slice(0, MAX_TEXT);
 }
 
-/** Final prompt = admin's hidden prefix + what the user typed (either may be empty). */
-export function buildPrompt(parsedConfig, userPrompt) {
+const PLACEHOLDER_RE = /\{([a-zA-Z][a-zA-Z0-9_]*)\}/g;
+
+/**
+ * Final prompt. With a template, every `{prompt}` becomes the user's text and every `{key}` the
+ * resolved value of that param (text/number/boolean; uploads and unknown keys become "").
+ * Without a template: admin's hidden prefix + what the user typed (either may be empty).
+ */
+export function buildPrompt(parsedConfig, userPrompt, values = {}) {
   const prefix = String(parsedConfig?.systemPrompt || "").trim();
   const user = String(userPrompt || "").trim().slice(0, MAX_TEXT);
   const template = parsedConfig?.promptTemplate ? String(parsedConfig.promptTemplate) : "";
-  if (template.includes("{prompt}")) {
-    return template.replace("{prompt}", user).trim();
+
+  if (PLACEHOLDER_RE.test(template)) {
+    PLACEHOLDER_RE.lastIndex = 0;
+    const filled = template.replace(PLACEHOLDER_RE, (_, key) => {
+      if (key === "prompt") return user;
+      const v = values[key];
+      if (v === undefined || v === null || Array.isArray(v) || typeof v === "object") return "";
+      if (isUrlLike(v)) return ""; // uploads are sent as fal inputs, never pasted into the prompt
+      return String(v).trim();
+    });
+    return filled.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
   }
   return [prefix, user].filter(Boolean).join(" ").trim();
+}
+
+/** Placeholders a template references (excluding the built-in `prompt`). */
+export function templatePlaceholders(template) {
+  const keys = new Set();
+  for (const m of String(template || "").matchAll(PLACEHOLDER_RE)) if (m[1] !== "prompt") keys.add(m[1]);
+  return [...keys];
 }
 
 export function resolveParams(parsedConfig, body = {}, modelId) {

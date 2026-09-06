@@ -36,6 +36,10 @@ function sanitizeConfig(raw) {
       maxInputs: p.maxInputs !== undefined ? Math.max(1, Math.min(12, Number(p.maxInputs) || 1)) : undefined,
       placeholder: p.placeholder ? String(p.placeholder).slice(0, 200) : undefined,
       help: p.help ? String(p.help).slice(0, 300) : undefined,
+      required: p.required === true ? true : undefined,
+      // "vision": filled from the uploaded image through fal any-llm/vision using autofillInstruction
+      autofill: p.autofill === "vision" ? "vision" : undefined,
+      autofillInstruction: p.autofill === "vision" && p.autofillInstruction ? String(p.autofillInstruction).slice(0, 1500) : undefined,
     }));
 
   return {
@@ -51,6 +55,7 @@ function sanitizeConfig(raw) {
     theme: THEMES.includes(c.theme) ? c.theme : "slate-indigo",
     showPrompt: c.showPrompt !== false,
     requireImage: c.requireImage === true,
+    visionModel: c.visionModel ? String(c.visionModel).slice(0, 80) : "",
     userParams,
   };
 }
