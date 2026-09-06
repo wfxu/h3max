@@ -30,25 +30,33 @@ function PricingContent() {
   const { status } = useSession();
   const searchParams = useSearchParams();
   const [loadingPlan, setLoadingPlan] = useState(null);
+  const [providers, setProviders] = useState(null); // null = loading, [] = none configured
 
   useEffect(() => {
-    if (searchParams.get("success")) toast.success("Payment received — your credits are on the way.");
+    if (searchParams.get("success")) toast.success("Payment received — your credits have been added.");
     if (searchParams.get("canceled")) toast("Checkout canceled.");
+    if (searchParams.get("error")) toast.error(`Payment problem: ${searchParams.get("error")}`);
   }, [searchParams]);
 
-  const handleCheckout = async (planId) => {
+  useEffect(() => {
+    axios
+      .get("/api/checkout")
+      .then(({ data }) => setProviders(data.providers || []))
+      .catch(() => setProviders([]));
+  }, []);
+
+  const handleCheckout = async (planId, provider) => {
     if (status !== "authenticated") {
       toast.error("Please sign in first.");
       return;
     }
-    setLoadingPlan(planId);
+    setLoadingPlan(`${planId}:${provider}`);
     try {
-      const { data } = await axios.post("/api/checkout", { planId });
+      const { data } = await axios.post("/api/checkout", { planId, provider });
       if (!data.url) throw new Error("No checkout URL returned");
       window.location.href = data.url;
     } catch (err) {
       toast.error(err.response?.data?.error || "Could not start checkout.");
-    } finally {
       setLoadingPlan(null);
     }
   };
@@ -96,15 +104,30 @@ function PricingContent() {
                 <li className="flex items-center gap-2"><FaCheck className="text-primary text-[10px]" /> Credits never expire</li>
               </ul>
             </div>
-            <button
-              onClick={() => handleCheckout(plan.id)}
-              disabled={loadingPlan !== null}
-              className={`w-full py-3 rounded-full text-xs font-bold transition-all shadow-md cursor-pointer active:scale-[0.98] ${
-                plan.popular ? "bg-primary text-white hover:bg-primary-hover" : "bg-bg-page hover:bg-bg-card text-primary-text border border-divider"
-              }`}
-            >
-              {loadingPlan === plan.id ? "Opening checkout…" : status === "authenticated" ? "Buy credits" : "Sign in to buy"}
-            </button>
+            <div className="space-y-2">
+              {providers === null ? (
+                <div className="w-full py-3 rounded-full text-xs font-bold text-center bg-bg-page border border-divider text-secondary-text">Loading…</div>
+              ) : providers.length === 0 ? (
+                <div className="w-full py-3 rounded-full text-xs font-bold text-center bg-bg-page border border-divider text-secondary-text">Payments coming soon</div>
+              ) : (
+                providers.map((p, i) => {
+                  const primary = plan.popular && i === 0;
+                  const busy = loadingPlan === `${plan.id}:${p.id}`;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => handleCheckout(plan.id, p.id)}
+                      disabled={loadingPlan !== null}
+                      className={`w-full py-3 rounded-full text-xs font-bold transition-all shadow-md cursor-pointer active:scale-[0.98] disabled:opacity-60 ${
+                        primary ? "bg-primary text-white hover:bg-primary-hover" : "bg-bg-page hover:bg-bg-card text-primary-text border border-divider"
+                      }`}
+                    >
+                      {busy ? "Opening checkout…" : status === "authenticated" ? `Buy with ${p.label}` : `Sign in · ${p.label}`}
+                    </button>
+                  );
+                })
+              )}
+            </div>
           </div>
         ))}
       </div>

@@ -19,8 +19,14 @@ const config = {
     studio: { id: "studio", name: "Studio Pack", credits: 6500, price: 5000, creemProductId: process.env.CREEM_PRODUCT_STUDIO },
   },
   payments: {
-    // "creem" | "stripe" | "" (auto: creem if CREEM_API_KEY is set, else stripe if STRIPE_SECRET_KEY is set)
-    provider: process.env.PAYMENT_PROVIDER || "",
+    // Comma-separated list to show, in order (e.g. "paypal,creem"). Empty = every configured provider.
+    provider: process.env.PAYMENT_PROVIDERS || process.env.PAYMENT_PROVIDER || "",
+    paypal: {
+      clientId: process.env.PAYPAL_CLIENT_ID,
+      clientSecret: process.env.PAYPAL_CLIENT_SECRET,
+      env: (process.env.PAYPAL_ENV || "sandbox").toLowerCase() === "live" ? "live" : "sandbox",
+      webhookId: process.env.PAYPAL_WEBHOOK_ID,
+    },
     creem: {
       apiKey: process.env.CREEM_API_KEY,
       webhookSecret: process.env.CREEM_WEBHOOK_SECRET,

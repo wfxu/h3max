@@ -1,35 +1,67 @@
-// Credit purchases. One provider is active at a time (Creem by default, Stripe optional); both end
-// in `grantCredits`, which is idempotent on the provider's order id so webhook retries are safe.
+// Credit purchases. Several providers can be live at once (PayPal, Creem, Stripe); the buyer picks
+// one on /pricing. Every path ends in `grantCredits`, which is idempotent on the provider's order id.
 import { prisma } from "../prisma";
 import config from "../config";
 import { createCreemCheckout, creemConfigured } from "../billing/creem";
+import { createPayPalOrder, paypalConfigured } from "../billing/paypal";
 
 function stripeConfigured() {
   const key = config.stripe.secretKey;
   return typeof key === "string" && key.startsWith("sk_") && !/placeholder/i.test(key);
 }
 
+export const PROVIDER_LABELS = {
+  paypal: "PayPal",
+  creem: "Card (Creem)",
+  stripe: "Card (Stripe)",
+};
+
+/** Providers that have credentials, in display order. PAYMENT_PROVIDERS can pin/limit the list. */
+export function configuredPaymentProviders() {
+  const available = [];
+  if (paypalConfigured()) available.push("paypal");
+  if (creemConfigured()) available.push("creem");
+  if (stripeConfigured()) available.push("stripe");
+
+  const wanted = (config.payments.provider || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  if (!wanted.length) return available;
+  return wanted.filter((p) => available.includes(p));
+}
+
 export function activePaymentProvider() {
-  const forced = (config.payments.provider || "").toLowerCase();
-  if (forced === "creem") return creemConfigured() ? "creem" : null;
-  if (forced === "stripe") return stripeConfigured() ? "stripe" : null;
-  if (creemConfigured()) return "creem";
-  if (stripeConfigured()) return "stripe";
-  return null;
+  return configuredPaymentProviders()[0] || null;
 }
 
 export const BillingService = {
+  providers: configuredPaymentProviders,
   provider: activePaymentProvider,
 
-  /** Returns { url } for the hosted checkout page of the given plan. */
-  async createCheckoutSession(user, planId) {
+  /** Returns { url, provider } for the hosted checkout page of the given plan. */
+  async createCheckoutSession(user, planId, providerHint) {
     const plan = config.plans[planId];
     if (!plan) throw new Error("Invalid plan selected");
-    const provider = activePaymentProvider();
+    const providers = configuredPaymentProviders();
+    const provider = providerHint && providers.includes(providerHint) ? providerHint : providers[0];
     if (!provider) throw new Error("Payments are not configured yet");
 
     const successUrl = `${config.auth.url}/pricing?success=true`;
     const cancelUrl = `${config.auth.url}/pricing?canceled=true`;
+
+    if (provider === "paypal") {
+      const requestId = `h3max-${user.id}-${plan.id}-${Date.now().toString(36)}`;
+      const { orderId, url } = await createPayPalOrder({
+        user,
+        plan,
+        requestId,
+        returnUrl: `${config.auth.url}/api/paypal/return`,
+        cancelUrl,
+      });
+      await this.recordPendingOrder({ provider, providerOrderId: orderId, userId: user.id, planId: plan.id, credits: plan.credits, amountCents: plan.price, currency: "USD" });
+      return { url, provider };
+    }
 
     if (provider === "creem") {
       const requestId = `h3max-${user.id}-${plan.id}-${Date.now().toString(36)}`;
@@ -59,33 +91,62 @@ export const BillingService = {
     return { url: session.url, provider };
   },
 
+  /** Remember an order before the buyer leaves, so capture/webhook can verify amount and owner. */
+  async recordPendingOrder({ provider, providerOrderId, userId, planId, credits, amountCents, currency }) {
+    return prisma.payment.upsert({
+      where: { providerOrderId },
+      update: {},
+      create: { provider, providerOrderId, userId, planId, credits, amountCents, currency, status: "created" },
+    });
+  },
+
   /**
    * Record a paid order and add its credits — exactly once per providerOrderId.
-   * Falls back to the plan's credit amount when the provider did not echo `credits` back.
+   * Works both for orders we pre-recorded (status "created") and for providers that only webhook us.
    */
   async grantCredits({ provider, providerOrderId, checkoutId, userId, planId, credits, amountCents, currency }) {
     if (!providerOrderId) throw new Error("Missing provider order id");
-    const plan = planId ? config.plans[planId] : null;
-    const amount = Number(credits) > 0 ? Number(credits) : plan?.credits || 0;
-    if (!userId || amount <= 0) throw new Error(`Cannot grant credits: userId=${userId} credits=${amount}`);
 
     const existing = await prisma.payment.findUnique({ where: { providerOrderId } });
-    if (existing) return { granted: false, duplicate: true, paymentId: existing.id };
+    if (existing?.status === "paid") return { granted: false, duplicate: true, paymentId: existing.id };
 
-    const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
-    if (!user) throw new Error(`Unknown user ${userId}`);
+    const resolvedUserId = existing?.userId || userId;
+    const resolvedPlanId = existing?.planId || planId || null;
+    const plan = resolvedPlanId ? config.plans[resolvedPlanId] : null;
+    const amount = existing?.credits || (Number(credits) > 0 ? Number(credits) : plan?.credits || 0);
+    if (!resolvedUserId || amount <= 0) throw new Error(`Cannot grant credits: userId=${resolvedUserId} credits=${amount}`);
+
+    // Amount check: what the provider says was paid must match the pack's price.
+    const expectedCents = existing?.amountCents ?? plan?.price ?? null;
+    if (expectedCents !== null && amountCents !== null && amountCents !== undefined && Number(amountCents) < expectedCents) {
+      throw new Error(`Paid amount ${amountCents} is below the plan price ${expectedCents}`);
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: resolvedUserId }, select: { id: true } });
+    if (!user) throw new Error(`Unknown user ${resolvedUserId}`);
 
     const payment = await prisma.$transaction(async (tx) => {
-      const created = await tx.payment.create({
-        data: { provider, providerOrderId, checkoutId: checkoutId || null, userId, planId: planId || null, credits: amount, amountCents: amountCents ?? null, currency: currency || null },
-      });
-      await tx.user.update({ where: { id: userId }, data: { credits: { increment: amount } } });
-      return created;
+      const data = {
+        provider,
+        providerOrderId,
+        checkoutId: checkoutId || existing?.checkoutId || null,
+        userId: resolvedUserId,
+        planId: resolvedPlanId,
+        credits: amount,
+        amountCents: amountCents ?? existing?.amountCents ?? null,
+        currency: currency || existing?.currency || null,
+        status: "paid",
+      };
+      const row = existing
+        ? await tx.payment.update({ where: { id: existing.id }, data })
+        : await tx.payment.create({ data });
+      await tx.user.update({ where: { id: resolvedUserId }, data: { credits: { increment: amount } } });
+      return row;
     });
     return { granted: true, duplicate: false, paymentId: payment.id, credits: amount };
   },
 
-  /** Stripe webhook (only when PAYMENT_PROVIDER=stripe). */
+  /** Stripe webhook (only when Stripe is configured). */
   async handleStripeWebhook(body, signature) {
     const { stripe } = await import("../stripe");
     const event = stripe.webhooks.constructEvent(body, signature, config.stripe.webhookSecret);
