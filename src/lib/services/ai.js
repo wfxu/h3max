@@ -5,7 +5,8 @@ import { UserService } from "./user";
 import config from "../config";
 import { getFal, hasFalKey } from "../fal";
 
-const MOCK_VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+// Served from public/mock/ (git-ignored) so it also loads where Google-hosted samples are blocked.
+const mockVideoUrl = () => process.env.MOCK_VIDEO_URL || `${config.siteUrl}/mock/sample.mp4`;
 
 function extractVideoUrl(payload) {
   if (!payload || typeof payload !== "object") return null;
@@ -52,7 +53,7 @@ export const AIService = {
     if (this.isMock()) {
       const done = await prisma.creation.update({
         where: { id: creation.id },
-        data: { status: "completed", resultImage: MOCK_VIDEO_URL, requestId: `mock_${creation.id}` },
+        data: { status: "completed", resultImage: mockVideoUrl(), requestId: `mock_${creation.id}` },
       });
       return { id: done.id, status: done.status, resultImage: done.resultImage, mock: true };
     }

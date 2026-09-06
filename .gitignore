@@ -17,3 +17,6 @@ npm-debug.log*
 !.env.example
 *.tsbuildinfo
 next-env.d.ts
+
+# local mock clip for FAL_KEY-less development
+/public/mock/
