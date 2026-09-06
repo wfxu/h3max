@@ -46,6 +46,24 @@ model User {
   sessions      Session[]
   creations     Creation[]
   instances     AppInstance[]
+  payments      Payment[]
+}
+
+/// One credit purchase. `providerOrderId` is unique so webhook retries can never grant credits twice.
+model Payment {
+  id              String   @id @default(cuid())
+  provider        String   // "creem" | "stripe"
+  providerOrderId String   @unique
+  checkoutId      String?
+  planId          String?
+  credits         Int
+  amountCents     Int?
+  currency        String?
+  status          String   @default("paid")
+  createdAt       DateTime @default(now())
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// A "scenario" tool on /studio: fixed model + baked-in settings + a minimal user form.

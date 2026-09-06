@@ -53,7 +53,7 @@ function LoginContent() {
         <div className="flex items-start gap-2.5 bg-primary/5 border border-primary/10 p-3.5 rounded text-[11px] leading-relaxed text-secondary-text">
           <FaInfoCircle className="text-primary text-xs shrink-0 mt-0.5" />
           <span>
-            Payments are handled by Stripe; credits are added to your account automatically. Failed generations are refunded.
+            Purchases go through our payment partner (Creem) and credits land in your account automatically. Failed generations are refunded.
           </span>
         </div>
 

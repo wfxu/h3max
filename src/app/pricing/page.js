@@ -18,7 +18,7 @@ const DESCRIPTIONS = {
   studio: "Best value for teams and agencies producing daily.",
 };
 
-const PLANS = Object.values(config.stripe.plans).map((p) => ({
+const PLANS = Object.values(config.plans).map((p) => ({
   ...p,
   priceLabel: `$${(p.price / 100).toFixed(0)}`,
   description: DESCRIPTIONS[p.id] || "",
